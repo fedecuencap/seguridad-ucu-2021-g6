@@ -1,0 +1,7 @@
+/target/
+/.classpath
+/.factorypath
+/.project
+/.tern-project
+/logs/
+/.settings/

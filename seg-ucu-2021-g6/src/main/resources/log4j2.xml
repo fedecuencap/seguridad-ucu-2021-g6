@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %m%n
+        </Property>
+    </Properties>
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+		<RollingFile name="RollingFileAppender" fileName="logs/segeduucug6.log" filePattern="logs/segeduucug6-%d{yyyy-MM-dd}.log.gz">
+			<PatternLayout>
+				<pattern>${LOG_PATTERN}</pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy /><!-- Rotated everyday -->
+			</Policies>
+		</RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="uy.edu.ucu.seg.g6" level="debug" additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="RollingFileAppender" />
+        </Logger>
+        <Root level="debug">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="RollingFileAppender" />
+        </Root>
+    </Loggers>
+</Configuration>
