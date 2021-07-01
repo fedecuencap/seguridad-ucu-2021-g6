@@ -29,10 +29,9 @@ public class Contexto {
 	public Contexto(HttpSession session) { this.session = session; }
 	
 	@SuppressWarnings("unchecked")
-	public void agregarMensaje(Severidad severidad, Integer codigo, String descripcion, Object... parametros) {
+	public void agregarMensaje(Severidad severidad, String descripcion, Object... parametros) {
 		if(session != null) {
 			Mensaje mensaje = new Mensaje();
-			mensaje.setCodigo(codigo);
 			mensaje.setDescripcion(descripcion);
 			mensaje.setSeveridad(severidad);
 			if (!isEmpty(parametros)) {

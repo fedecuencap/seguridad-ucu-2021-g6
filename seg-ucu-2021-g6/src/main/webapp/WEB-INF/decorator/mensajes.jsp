@@ -4,10 +4,10 @@
 		<div class='notifications top-right'></div>
 		<core:if test='${not empty sessionScope.mensajesInfo}'>
 			<!-- MENSAJES INFO -->
-			<div id="msginformaciones" class="hide">
-				<ul>
+			<div id="msginformaciones" class="alert alert-info">
+				<ul style="margin-bottom: 0;">
 					<core:forEach var="mensaje" items="${sessionScope.mensajesInfo}">
-						<li>${mensaje.codigo} - ${mensaje.descripcionFormateada}</li>
+						<li>${mensaje.descripcionFormateada}</li>
 					</core:forEach>
 				</ul>
 			</div>
@@ -15,10 +15,10 @@
 		</core:if>
 		<core:if test='${not empty sessionScope.mensajesSuccess}'>
 			<!-- MENSAJES INFO -->
-			<div id="msgsuccess" class="hide">
-				<ul>
+			<div id="msgsuccess" class="alert alert-success">
+				<ul style="margin-bottom: 0;">
 					<core:forEach var="mensaje" items="${sessionScope.mensajesSuccess}">
-						<li>${mensaje.codigo} - ${mensaje.descripcionFormateada}</li>
+						<li>${mensaje.descripcionFormateada}</li>
 					</core:forEach>
 				</ul>
 			</div>
@@ -26,10 +26,10 @@
 		</core:if>
 		<core:if test="${not empty sessionScope.mensajesWarning}">
 			<!-- MENSAJES WARNING -->
-			<div id="msgadvertencias" class="hide">
-				<ul>
+			<div id="msgadvertencias" class="alert alert-warning">
+				<ul style="margin-bottom: 0;">
 					<core:forEach var="mensaje" items="${sessionScope.mensajesWarning}">
-						<li>${mensaje.codigo} - ${mensaje.descripcionFormateada}</li>
+						<li>${mensaje.descripcionFormateada}</li>
 					</core:forEach>
 				</ul>
 			</div>
@@ -37,10 +37,10 @@
 		</core:if>
 		<core:if test="${not empty sessionScope.mensajesError}">
 			<!-- MENSAJES ERROR -->
-			<div id="msgerrores" class="hide">
-				<ul>
+			<div id="msgerrores" class="alert alert-danger">
+				<ul style="margin-bottom: 0;">
 					<core:forEach var="mensaje" items="${sessionScope.mensajesError}">
-						<li>${mensaje.codigo} - ${mensaje.descripcionFormateada}</li>
+						<li>${mensaje.descripcionFormateada}</li>
 					</core:forEach>
 				</ul>
 			</div>
@@ -48,10 +48,10 @@
 		</core:if>
 		<core:if test="${not empty sessionScope.mensajesIndefinido}">
 			<!-- MENSAJES ERROR -->
-			<div id="msgindefinido" class="hide">
-				<ul>
+			<div id="msgindefinido" class="alert alert-secondary">
+				<ul style="margin-bottom: 0;">
 					<core:forEach var="mensaje" items="${sessionScope.mensajesIndefinido}">
-						<li>${mensaje.codigo} - ${mensaje.descripcionFormateada}</li>
+						<li>${mensaje.descripcionFormateada}</li>
 					</core:forEach>
 				</ul>
 			</div>

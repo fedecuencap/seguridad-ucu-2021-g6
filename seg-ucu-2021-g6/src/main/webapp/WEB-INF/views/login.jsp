@@ -13,7 +13,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Seg UCU G6 - Login</title>
+    <title>Ingresar</title>
+	<link rel="icon" type="image/ico" href="/static/img/favicon.ico">
 
     <!-- Custom fonts for this template-->
     <link href="/static/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -44,6 +45,8 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Seguridad UCU G6 2021</h1>
                                     </div>
+									<!-- HEADER -->
+									<jsp:include page="/WEB-INF/decorator/mensajes.jsp" />
                                     <form:form modelAttribute="loginViewModel" id="myForm" action="login" method="post" enctype="multipart/form-data" data-fv-framework="bootstrap" class="user">
                                         <div class="form-group">
 											<spring:bind path="username">
@@ -64,7 +67,7 @@
                                         <a class="small" href="forgot-password.html">¿Olvidaste tu password?</a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small" href="register.html">¡Registrate aquí!</a>
+                                        <a class="small" href="/app/registro">¡Registrate aquí!</a>
                                     </div>
                                 </div>
                             </div>

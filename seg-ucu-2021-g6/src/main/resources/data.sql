@@ -8,13 +8,16 @@ CREATE TABLE usuario (
   salt VARCHAR(50) NOT NULL,
   password VARCHAR(100) NOT NULL,
   fbaja TIMESTAMP,
+  fcrea TIMESTAMP NOT NULL,
+  factivacion TIMESTAMP,
+  uuidactivacion VARCHAR(250) ,
   uact VARCHAR(50) NOT NULL,
   fact TIMESTAMP NOT NULL
 );
 
-INSERT INTO usuario (username, nombre, email, fnac, salt, password, fbaja, uact, fact) VALUES
-  ('admin', 'Administrator', 'admin@cervezero.com', PARSEDATETIME('10/04/1986','dd/MM/yyyy','en'),'l1aFNs33xy4IWm7gadZlOw==', '+lvVHIO6sIVbSTWCtgGlXg==', NULL, 'admin', now()),
-  ('notadmin', 'Not Administrator', 'notadmin@cervezero.com', PARSEDATETIME('10/04/1986','dd/MM/yyyy','en'), 'l1aFNs33xy4IWm7gadZlOw==', '+lvVHIO6sIVbSTWCtgGlXg==', NULL, 'admin', now());
+INSERT INTO usuario (username, nombre, email, fnac, salt, password, fbaja, uact, fact, fcrea, factivacion) VALUES
+  ('admin', 'Administrator', 'admin@cervezero.com', PARSEDATETIME('10/04/1986','dd/MM/yyyy','en'),'l1aFNs33xy4IWm7gadZlOw==', '+lvVHIO6sIVbSTWCtgGlXg==', NULL, 'admin', now(), now(), now()),
+  ('notadmin', 'Not Administrator', 'notadmin@cervezero.com', PARSEDATETIME('10/04/1986','dd/MM/yyyy','en'), 'l1aFNs33xy4IWm7gadZlOw==', '+lvVHIO6sIVbSTWCtgGlXg==', NULL, 'admin', now(), now(), now());
 
 DROP TABLE IF EXISTS rol;
 
@@ -28,7 +31,7 @@ CREATE TABLE rol (
 
 INSERT INTO rol (rolname, nombre, fbaja, uact, fact) VALUES
   ('ROLE_ADMIN', 'Rol Administrator', NULL, 'admin', now()),
-  ('ROLE_NOTADMIN', 'Rol Not Administrator', NULL, 'admin', now())
+  ('ROLE_SELF_REGISTER', 'Rol Self Register', NULL, 'admin', now())
   ;
 
 DROP TABLE IF EXISTS asignacion_usuario;
@@ -46,7 +49,7 @@ CREATE TABLE asignacion_usuario (
 
 INSERT INTO asignacion_usuario (username, rolname, fbaja, uact, fact) VALUES
   ('admin', 'ROLE_ADMIN', NULL, 'admin', now()),
-  ('notadmin', 'ROLE_NOTADMIN', NULL, 'admin', now());
+  ('notadmin', 'ROLE_SELF_REGISTER', NULL, 'admin', now());
 
 DROP TABLE IF EXISTS sesion;
 

@@ -3,6 +3,7 @@ package uy.edu.ucu.seg.g6.web.config;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -39,26 +41,36 @@ public class SecurityAuthFilter extends OncePerRequestFilter {
 	@Autowired
 	private SecurityService securityService;
 
+	@Autowired 
+	private Environment env;
+	
+	private List<String> publicRoutes = Arrays.asList("/app/login","/app/registro");
+	private List<String> authenticatedRoutes = Arrays.asList("/app/index");;
+	private List<String> adminRoutes = Arrays.asList("/app/usuarios","/app/usuarios/listado/");
+	
+	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		try {
 			String uri = request.getRequestURI();
-			if(uri.endsWith("/app/login")) {
+			if(publicRoutes.contains(uri)) {
 				//anonymus request
 				//valid request
 				filterChain.doFilter(request, response);
-			}else if(uri.matches("/app/.*")){
+			}else if(authenticatedRoutes.contains(uri)){
 				String cookie = getCookie(request);
 				logger.info("### inicio filtro authenticacion");
 				if (!StringUtils.isBlank(cookie)) {
 					SesionDto sesion = securityService.getSesion(cookie);
 					if(sesion == null) {
 						logger.error("Intento de acceso no autorizado, sesion null, " + cookie + ", " + uri);
+						response.setStatus(403);
 						response.sendRedirect("/app/login");
 					}else {
 						if(LocalDateTime.now().isAfter(sesion.getFechaUltimoAcceso().plusMinutes(30))) {
 							logger.error("Intento de acceso no autorizado, sesion vencida, " + cookie + ", " + uri + ", ultimo acceso: " + sesion.getFechaUltimoAcceso());
+							response.setStatus(403);
 							response.sendRedirect("/app/login");
 						}else {
 							Contexto contexto = new Contexto();
@@ -72,6 +84,47 @@ public class SecurityAuthFilter extends OncePerRequestFilter {
 					}
 				}else {
 					logger.error("Intento de acceso no autorizado, cookie null, " + uri);
+					response.setStatus(403);
+					response.sendRedirect("/app/login");
+				}
+			}else if(adminRoutes.contains(uri)){
+				String cookie = getCookie(request);
+				logger.info("### inicio filtro authenticacion");
+				if (!StringUtils.isBlank(cookie)) {
+					SesionDto sesion = securityService.getSesion(cookie);
+					if(sesion == null) {
+						logger.error("Intento de acceso no autorizado, sesion null, " + cookie + ", " + uri);
+						response.setStatus(403);
+						response.sendRedirect("/app/login");
+					}else {
+						if(LocalDateTime.now().isAfter(sesion.getFechaUltimoAcceso().plusMinutes(30))) {
+							logger.error("Intento de acceso no autorizado, sesion vencida, " + cookie + ", " + uri + ", ultimo acceso: " + sesion.getFechaUltimoAcceso());
+							response.setStatus(403);
+							response.sendRedirect("/app/login");
+						}else {
+							List<String> rolesUsuario = Arrays.asList(sesion.getRoles().split(","));
+							boolean puedeContinuar = false;
+							if(rolesUsuario.contains("ROLE_ADMIN")) {
+								puedeContinuar = true;
+							}
+							if(puedeContinuar) {
+								Contexto contexto = new Contexto();
+								contexto.setUsername(sesion.getUsername());
+								contexto.setSession(request.getSession(false));
+								contexto.setRoles(rolesUsuario);
+								Gson gson = new Gson();
+								ThreadContext.put("sec-auth-context", gson.toJson(contexto));
+								filterChain.doFilter(request, response);
+							}else {
+								logger.error("Intento de acceso no autorizado, cookie null, " + uri);
+								response.setStatus(403);
+								response.sendRedirect("/app/403");
+							}
+						}
+					}
+				}else {
+					logger.error("Intento de acceso no autorizado, cookie null, " + uri);
+					response.setStatus(403);
 					response.sendRedirect("/app/login");
 				}
 			}else {

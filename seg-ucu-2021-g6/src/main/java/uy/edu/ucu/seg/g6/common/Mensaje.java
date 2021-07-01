@@ -18,8 +18,6 @@ public class Mensaje implements Comparable<Mensaje>{
 		INFO, WARNING, ERROR, SUCCESS
 	}	
 
-	private Integer codigo = 0;
-
 	private Severidad severidad;
 
 	private List<Object> parametros = new ArrayList<Object>();
@@ -37,7 +35,7 @@ public class Mensaje implements Comparable<Mensaje>{
 	public int compareTo(Mensaje o) {
 		int compare = this.severidad.compareTo(o.getSeveridad()); 
 		if(compare == 0) {
-			compare = this.getCodigo().compareTo(o.getCodigo());
+			compare = this.getDescripcion().compareTo(o.getDescripcion());
 		}
 		return compare;
 	}

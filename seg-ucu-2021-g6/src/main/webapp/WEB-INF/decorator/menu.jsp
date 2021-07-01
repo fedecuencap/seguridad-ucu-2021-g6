@@ -15,14 +15,14 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Tienda
+                Menu
             </div>
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
-                <a class="nav-link" href="/cervezas">
+                <a class="nav-link" href="/app/usuarios">
                     <i class="fas fa-fw fa-table"></i>
-                    <span>Cervezas</span></a>
+                    <span>Listado de usuarios</span></a>
             </li>
 
 

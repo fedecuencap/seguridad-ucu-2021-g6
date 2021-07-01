@@ -27,7 +27,15 @@ public class UsuarioDto implements Serializable {
 	private String salt;
 
 	private String password;
-	
+
+	private String confirmPassword;
+
+	private String uuidactivacion;
+
+	private LocalDateTime factivacion;
+
+	private LocalDateTime fcrea;
+
 	private LocalDateTime fbaja;
 
 	private String uact;

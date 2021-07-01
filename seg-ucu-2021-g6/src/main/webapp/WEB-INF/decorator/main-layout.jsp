@@ -16,6 +16,7 @@
     <meta name="author" content="">
 
 	<title><sitemesh:write property="title" /></title>
+	<link rel="icon" type="image/ico" href="/static/img/favicon.ico">
 
     <!-- Custom fonts for this template-->
     <link href="/static/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -25,9 +26,23 @@
 
     <!-- Custom styles for this template-->
     <link href="/static/css/sb-admin-2.min.css" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link href="/static/vendor/bootstrap-table/bootstrap-table.css" rel="stylesheet">
 
 	<!-- PAGE JAVASCRIPT -->
 	<sitemesh:write property="head" />
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="/static/vendor/jquery/jquery.min.js"></script>
+    <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="/static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+	<script src="/static/vendor/bootstrap-table/bootstrap-table.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="/static/js/sb-admin-2.min.js"></script>
 
 </head>
 
@@ -51,6 +66,8 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
+					<!-- HEADER -->
+					<jsp:include page="/WEB-INF/decorator/mensajes.jsp" />
 					<sitemesh:write property="body" />
 
                 </div>
@@ -96,16 +113,7 @@
     </div>
 
 	<sitemesh:write property="script" />
-
-    <!-- Bootstrap core JavaScript-->
-    <script src="/static/vendor/jquery/jquery.min.js"></script>
-    <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Core plugin JavaScript-->
-    <script src="/static/vendor/jquery-easing/jquery.easing.min.js"></script>
-
-    <!-- Custom scripts for all pages-->
-    <script src="/static/js/sb-admin-2.min.js"></script>
+    
 
 </body>
 </html>

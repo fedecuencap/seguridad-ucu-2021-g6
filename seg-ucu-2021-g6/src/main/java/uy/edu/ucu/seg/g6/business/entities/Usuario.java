@@ -45,10 +45,20 @@ public class Usuario implements Serializable {
 	@Column(name = "fbaja", nullable = true)
 	private LocalDateTime fbaja;
 
+	@Column(name = "uuidactivacion", length = 250, nullable = true)
+	private String uuidactivacion;
+
+	@Column(name = "factivacion", nullable = true)
+	private LocalDateTime factivacion;
+
 	@Column(name = "uact", length = 50, nullable = false)
 	private String uact;
 
 	@Column(name = "fact", nullable = false)
 	private LocalDateTime fact;
+
+	@Column(name = "fcrea", nullable = false)
+	private LocalDateTime fcrea;
+
 }
 
