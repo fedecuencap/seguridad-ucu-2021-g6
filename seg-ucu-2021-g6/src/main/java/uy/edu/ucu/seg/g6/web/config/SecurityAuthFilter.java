@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
@@ -40,13 +39,10 @@ public class SecurityAuthFilter extends OncePerRequestFilter {
 	
 	@Autowired
 	private SecurityService securityService;
-
-	@Autowired 
-	private Environment env;
 	
 	private List<String> publicRoutes = Arrays.asList("/app/login","/app/registro");
-	private List<String> authenticatedRoutes = Arrays.asList("/app/index");;
-	private List<String> adminRoutes = Arrays.asList("/app/usuarios","/app/usuarios/listado/");
+	private List<String> authenticatedRoutes = Arrays.asList("/app/index");
+	private List<String> adminRoutes = Arrays.asList("/app/usuarios","/api/usuarios/listado/");
 	
 	
 	@Override
@@ -58,74 +54,25 @@ public class SecurityAuthFilter extends OncePerRequestFilter {
 				//anonymus request
 				//valid request
 				filterChain.doFilter(request, response);
-			}else if(authenticatedRoutes.contains(uri)){
+			}else if(authenticatedRoutes.contains(uri) || adminRoutes.contains(uri)){
 				String cookie = getCookie(request);
-				logger.info("### inicio filtro authenticacion");
-				if (!StringUtils.isBlank(cookie)) {
-					SesionDto sesion = securityService.getSesion(cookie);
-					if(sesion == null) {
-						logger.error("Intento de acceso no autorizado, sesion null, " + cookie + ", " + uri);
-						response.setStatus(403);
-						response.sendRedirect("/app/login");
-					}else {
-						if(LocalDateTime.now().isAfter(sesion.getFechaUltimoAcceso().plusMinutes(30))) {
-							logger.error("Intento de acceso no autorizado, sesion vencida, " + cookie + ", " + uri + ", ultimo acceso: " + sesion.getFechaUltimoAcceso());
+				Contexto contexto = checkAuthenticated(request, cookie, uri);
+				if(contexto != null) {
+					if(adminRoutes.contains(uri)) {
+						if(!checkIsAdmin(contexto)) {
+							logger.error("Intento de acceso no autorizado, cookie " + cookie + ", uri " + uri);
 							response.setStatus(403);
-							response.sendRedirect("/app/login");
+							response.sendRedirect("/app/403");
 						}else {
-							Contexto contexto = new Contexto();
-							contexto.setUsername(sesion.getUsername());
-							contexto.setSession(request.getSession(false));
-							contexto.setRoles(Arrays.asList(sesion.getRoles().split(",")));
 							Gson gson = new Gson();
 							ThreadContext.put("sec-auth-context", gson.toJson(contexto));
 							filterChain.doFilter(request, response);
 						}
-					}
-				}else {
-					logger.error("Intento de acceso no autorizado, cookie null, " + uri);
-					response.setStatus(403);
-					response.sendRedirect("/app/login");
-				}
-			}else if(adminRoutes.contains(uri)){
-				String cookie = getCookie(request);
-				logger.info("### inicio filtro authenticacion");
-				if (!StringUtils.isBlank(cookie)) {
-					SesionDto sesion = securityService.getSesion(cookie);
-					if(sesion == null) {
-						logger.error("Intento de acceso no autorizado, sesion null, " + cookie + ", " + uri);
-						response.setStatus(403);
-						response.sendRedirect("/app/login");
 					}else {
-						if(LocalDateTime.now().isAfter(sesion.getFechaUltimoAcceso().plusMinutes(30))) {
-							logger.error("Intento de acceso no autorizado, sesion vencida, " + cookie + ", " + uri + ", ultimo acceso: " + sesion.getFechaUltimoAcceso());
-							response.setStatus(403);
-							response.sendRedirect("/app/login");
-						}else {
-							List<String> rolesUsuario = Arrays.asList(sesion.getRoles().split(","));
-							boolean puedeContinuar = false;
-							if(rolesUsuario.contains("ROLE_ADMIN")) {
-								puedeContinuar = true;
-							}
-							if(puedeContinuar) {
-								Contexto contexto = new Contexto();
-								contexto.setUsername(sesion.getUsername());
-								contexto.setSession(request.getSession(false));
-								contexto.setRoles(rolesUsuario);
-								Gson gson = new Gson();
-								ThreadContext.put("sec-auth-context", gson.toJson(contexto));
-								filterChain.doFilter(request, response);
-							}else {
-								logger.error("Intento de acceso no autorizado, cookie null, " + uri);
-								response.setStatus(403);
-								response.sendRedirect("/app/403");
-							}
-						}
+						Gson gson = new Gson();
+						ThreadContext.put("sec-auth-context", gson.toJson(contexto));
+						filterChain.doFilter(request, response);
 					}
-				}else {
-					logger.error("Intento de acceso no autorizado, cookie null, " + uri);
-					response.setStatus(403);
-					response.sendRedirect("/app/login");
 				}
 			}else {
 				//not page request
@@ -143,6 +90,35 @@ public class SecurityAuthFilter extends OncePerRequestFilter {
 			return cookie.getValue();
 		}
 		return "";
+	}
+	
+	private Contexto checkAuthenticated(HttpServletRequest request, String cookie, String uri) {
+		logger.info("### inicio filtro authenticacion");
+		if (!StringUtils.isBlank(cookie)) {
+			SesionDto sesion = securityService.getSesion(cookie);
+			if(sesion == null) {
+				logger.error("Intento de acceso no autorizado, sesion null, cookie " + cookie + ", uri " + uri);
+				return null;
+			}else {
+				if(LocalDateTime.now().isAfter(sesion.getFechaUltimoAcceso().plusMinutes(30))) {
+					logger.error("Intento de acceso no autorizado, sesion vencida, " + cookie + ", " + uri + ", ultimo acceso: " + sesion.getFechaUltimoAcceso());
+					return null;
+				}else {
+					Contexto contexto = new Contexto();
+					contexto.setUsername(sesion.getUsername());
+					contexto.setSession(request.getSession(false));
+					contexto.setRoles(Arrays.asList(sesion.getRoles().split(",")));
+					return contexto;
+				}
+			}
+		}else {
+			logger.error("Intento de acceso no autorizado, cookie null, " + uri);
+			return null;
+		}
+	}
+	
+	private boolean checkIsAdmin(Contexto contexto) {
+		return contexto.getRoles().contains("ROLE_ADMIN");
 	}
 
 }
