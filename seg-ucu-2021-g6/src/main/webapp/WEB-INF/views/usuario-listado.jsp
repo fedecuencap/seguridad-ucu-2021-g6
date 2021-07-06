@@ -25,7 +25,7 @@
 
     $(document).ready(function () {
     	$('#dataTable').bootstrapTable({
-    		  url: '/app/usuarios/listado/',
+    		  url: '/api/usuarios/listado/',
     		  columns: [{
     		    field: 'username',
     		    title: 'Usuario'

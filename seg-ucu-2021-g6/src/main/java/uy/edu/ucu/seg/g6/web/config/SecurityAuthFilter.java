@@ -73,6 +73,9 @@ public class SecurityAuthFilter extends OncePerRequestFilter {
 						ThreadContext.put("sec-auth-context", gson.toJson(contexto));
 						filterChain.doFilter(request, response);
 					}
+				}else {
+					response.setStatus(403);
+					response.sendRedirect("/app/login");
 				}
 			}else {
 				//not page request
